@@ -16,9 +16,11 @@ app.get('/', function(req, res) {
 io.on('connection', function(socket) {
    console.log('A user connected');
    socket.on('join_room',function(data){
-	socket.emit('test',data)
+	//socket.emit('test',data)
 	let d=JSON.parse(data);
 	room[d.me]=socket.id;
+
+	socket.emit('test',room[d.me])
    })
    //Whenever someone disconnects this piece of code executed
    socket.on('disconnect', function () {
