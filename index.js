@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
 		sdp:m.sdp
 	}
 	//socket.emit('',connected[room[m.to]])
-   socket.in[room[m.to]].emit('chatting',JSON.stringify(ob))
+   io.sockets.connected[room[m.to]].emit('chatting',JSON.stringify(ob))
    })
 });
 
