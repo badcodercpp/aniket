@@ -20,7 +20,7 @@ io.on('connection', function(socket) {
 	let d=JSON.parse(data);
 	room[d.me]=socket.id;
 
-	socket.emit('test',room[d.me])
+	//socket.emit('test',room[d.me])
    })
    //Whenever someone disconnects this piece of code executed
    socket.on('disconnect', function () {
@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
 		sdp:m.sdp
 	}
 	//socket.emit('',connected[room[m.to]])
-   socket.to[room[m.to]].emit('chatting',JSON.stringify(ob))
+   socket.in[room[m.to]].emit('chatting',JSON.stringify(ob))
    })
 });
 
