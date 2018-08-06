@@ -27,14 +27,20 @@ io.on('connection', function(socket) {
       console.log('A user disconnected');
    });
    socket.on('start_chat',function(message){
-	//let m=JSON.parse(message)
 	let ob={
 		to:message.to,
 		sdp:message.sdp
 	}
-	//socket.emit('',connected[room[m.to]])
 	let too=room[message.to];
-   io.to(too).emit('chatting',ob)
+   	io.to(too).emit('chatting',ob)
+   })
+   socket.on('ice_candidate',function(message){
+	let ob={
+		to:message.to,
+		candidate:message.candidate
+	}
+	let too=room[message.to];
+   	io.to(too).emit('isIceCandidate',ob)
    })
 });
 
