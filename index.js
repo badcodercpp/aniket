@@ -6,6 +6,8 @@ var io = require('socket.io')(http);
 
 const PORT = process.env.PORT || 5000
 
+var room={}
+
 app.get('/', function(req, res) {
    res.sendfile('index.html');
 });
@@ -13,11 +15,20 @@ app.get('/', function(req, res) {
 //Whenever someone connects this gets executed
 io.on('connection', function(socket) {
    console.log('A user connected');
-
+   socket.on('join_room',function(data){
+	room[data.me]=socket.id;
+   })
    //Whenever someone disconnects this piece of code executed
    socket.on('disconnect', function () {
       console.log('A user disconnected');
    });
+   socket.on('start_chat',function(message){
+	let ob={
+		to:message.to,
+		sdp:message.sdp
+	}
+   socket.connected[room[message.to]].emit('chatting',JSON.stringify(ob))
+   })
 });
 
 http.listen(PORT, function() {
