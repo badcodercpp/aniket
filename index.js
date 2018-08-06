@@ -16,6 +16,7 @@ app.get('/', function(req, res) {
 io.on('connection', function(socket) {
    console.log('A user connected');
    socket.on('join_room',function(data){
+	socket.emit('chatting',data)
 	room[data.me]=socket.id;
    })
    //Whenever someone disconnects this piece of code executed
