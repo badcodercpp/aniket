@@ -14,19 +14,19 @@
   <input id="textRoomInput" >
   <button onclick="textRoomPress();">Send</button>
 </div>
-<video id="selfView" autoplay></video>
+<video id="selfView" ></video>
 <div id="remoteViewContainer"></div>
 <div id="roomIDContainer">
   <input id="roomID">
   <button onclick="press();">Join/Create room</button>
 </div>
-</body>
+
 <script type="text/javascript">
 var socket = io('https://pratibha-rtc.herokuapp.com/');
 
 var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
 var RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription;
-navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia;
+
 
 var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
 
@@ -36,7 +36,7 @@ var remoteViewContainer = document.getElementById("remoteViewContainer");
 var localStream;
 
 function getLocalStream() {
-  navigator.getUserMedia({ "audio": true, "video": true }, function (stream) {
+  navigator.mediaDevices.getUserMedia({ "audio": true, "video": true }, function (stream) {
     localStream = stream;
     selfView.src = URL.createObjectURL(stream);
   }, logError);
@@ -218,4 +218,5 @@ function textRoomPress() {
   ga('send', 'pageview');
 
 </script>
+</body>
 </html>
