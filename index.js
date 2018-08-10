@@ -3,11 +3,11 @@ var path=require('path')
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-app.use(express.static(path.join(__dirname, 'public')))
+
 const PORT = process.env.PORT || 5000
 
 var room={}
-
+app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
    res.sendfile('index.html');
 });
