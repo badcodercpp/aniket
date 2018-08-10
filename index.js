@@ -1,9 +1,9 @@
-
-
-var app = require('express')();
+var express=require('express')
+var path=require('path')
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-express.static(path.join(__dirname, 'public'))
+app.use(express.static(path.join(__dirname, 'public')))
 const PORT = process.env.PORT || 5000
 
 var room={}
