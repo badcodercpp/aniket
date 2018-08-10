@@ -4,57 +4,218 @@
 <head>
 	<title>test</title>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
-<video autoplay style="width: 500px;height: 500px"></video>
-	<script type="text/javascript">
-		const socket = io('https://pratibha-rtc.herokuapp.com/');
-		socket.on('connect', function(){
-		  socket.emit('join_room',JSON.stringify({me:"pratibha"}))
-		});
-		var pc;
-		var configuration = {"iceServers": [{ 'url': 'stun:stun.l.google.com:19302' }]};
-		   pc = new RTCPeerConnection(configuration);
-		   var remoteView = document.querySelector('video');
-		   // send any ice candidates to the other peer
-		   pc.onicecandidate = function (evt) {
-		      socket.emit('ice_candidate',{'to': "pratibha", 'candidate': event.candidate });
-		   };
-		   
-		   // once remote stream arrives, show it in the remote video element
-		   pc.onaddstream = function (evt) {
-		      remoteView.src = URL.createObjectURL(evt.stream);
-		   };
-		   var isCaller=false;
-		   // get the local stream, show it in the local video element and send it
-		   navigator.mediaDevices.getUserMedia({ "audio": true, "video": true }, function (stream) {
-		      remoteView.src = URL.createObjectURL(stream);
-		      pc.addStream(stream);
-		      
-		      if (isCaller)
-		         pc.createOffer(gotDescription);
-		      
-		      else
-		         pc.createAnswer(pc.remoteDescription, gotDescription);
-		         
-		         
-		   },function(err){
-		   		alert(JSON.stringify(err))
-		   })
-		   function gotDescription(desc) {
-		            pc.setLocalDescription(desc);
-		            alert(JSON.stringify(desc))
-		            socket.emit('start_chat', {'to': "ajay", 'sdp': desc })
-		         }
-		   socket.on('chatting',function (evt) {
-		      	alert(JSON.stringify(evt))
-		         //var signal = JSON.parse(evt.data);
-		         pc.setRemoteDescription(new RTCSessionDescription(evt.sdp));
-		      })
-		   socket.on('isIceCandidate',function(){
-		   	alert(JSON.stringify(data))
-		   })
-	</script>
-	
+<div id="textRoom" style="display: none;">
+  <div id="textRoomContent">
+    <h3>Text Room</h3>
+  </div>
+  <input id="textRoomInput" >
+  <button onclick="textRoomPress();">Send</button>
+</div>
+<video id="selfView" autoplay></video>
+<div id="remoteViewContainer"></div>
+<div id="roomIDContainer">
+  <input id="roomID">
+  <button onclick="press();">Join/Create room</button>
+</div>
 </body>
+<script type="text/javascript">
+var socket = io('https://pratibha-rtc.herokuapp.com/');
+
+var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
+var RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription;
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia;
+
+var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+
+var pcPeers = {};
+var selfView = document.getElementById("selfView");
+var remoteViewContainer = document.getElementById("remoteViewContainer");
+var localStream;
+
+function getLocalStream() {
+  navigator.getUserMedia({ "audio": true, "video": true }, function (stream) {
+    localStream = stream;
+    selfView.src = URL.createObjectURL(stream);
+  }, logError);
+}
+
+function join(roomID) {
+  socket.emit('join', roomID, function(socketIds){
+    console.log('join', socketIds);
+    for (var i in socketIds) {
+      var socketId = socketIds[i];
+      createPC(socketId, true);
+    }
+  });
+}
+
+function createPC(socketId, isOffer) {
+  var pc = new RTCPeerConnection(configuration);
+  pcPeers[socketId] = pc;
+
+  pc.onicecandidate = function (event) {
+    console.log('onicecandidate', event);
+    if (event.candidate) {
+      socket.emit('exchange', {'to': socketId, 'candidate': event.candidate });
+    }
+  };
+
+  function createOffer() {
+    pc.createOffer(function(desc) {
+      console.log('createOffer', desc);
+      pc.setLocalDescription(desc, function () {
+        console.log('setLocalDescription', pc.localDescription);
+        socket.emit('exchange', {'to': socketId, 'sdp': pc.localDescription });
+      }, logError);
+    }, logError);
+  }
+
+  pc.onnegotiationneeded = function () {
+    console.log('onnegotiationneeded');
+    if (isOffer) {
+      createOffer();
+    }
+  }
+
+  pc.oniceconnectionstatechange = function(event) {
+    console.log('oniceconnectionstatechange', event);
+    if (event.target.iceConnectionState === 'connected') {
+      createDataChannel();
+    }
+  };
+  pc.onsignalingstatechange = function(event) {
+    console.log('onsignalingstatechange', event);
+  };
+
+  pc.onaddstream = function (event) {
+    console.log('onaddstream', event);
+    var element = document.createElement('video');
+    element.id = "remoteView" + socketId;
+    element.autoplay = 'autoplay';
+    element.src = URL.createObjectURL(event.stream);
+    remoteViewContainer.appendChild(element);
+  };
+  pc.addStream(localStream);
+  function createDataChannel() {
+    if (pc.textDataChannel) {
+      return;
+    }
+    var dataChannel = pc.createDataChannel("text");
+
+    dataChannel.onerror = function (error) {
+      console.log("dataChannel.onerror", error);
+    };
+
+    dataChannel.onmessage = function (event) {
+      console.log("dataChannel.onmessage:", event.data);
+      var content = document.getElementById('textRoomContent');
+      content.innerHTML = content.innerHTML + '<p>' + socketId + ': ' + event.data + '</p>';
+    };
+
+    dataChannel.onopen = function () {
+      console.log('dataChannel.onopen');
+      var textRoom = document.getElementById('textRoom');
+      textRoom.style.display = "block";
+    };
+
+    dataChannel.onclose = function () {
+      console.log("dataChannel.onclose");
+    };
+
+    pc.textDataChannel = dataChannel;
+  }
+  return pc;
+}
+
+function exchange(data) {
+  var fromId = data.from;
+  var pc;
+  if (fromId in pcPeers) {
+    pc = pcPeers[fromId];
+  } else {
+    pc = createPC(fromId, false);
+  }
+
+  if (data.sdp) {
+    console.log('exchange sdp', data);
+    pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+      if (pc.remoteDescription.type == "offer")
+        pc.createAnswer(function(desc) {
+          console.log('createAnswer', desc);
+          pc.setLocalDescription(desc, function () {
+            console.log('setLocalDescription', pc.localDescription);
+            socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
+          }, logError);
+        }, logError);
+    }, logError);
+  } else {
+    console.log('exchange candidate', data);
+    pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+  }
+}
+
+function leave(socketId) {
+  console.log('leave', socketId);
+  var pc = pcPeers[socketId];
+  pc.close();
+  delete pcPeers[socketId];
+  var video = document.getElementById("remoteView" + socketId);
+  if (video) video.remove();
+}
+
+socket.on('exchange', function(data){
+  exchange(data);
+});
+socket.on('leave', function(socketId){
+  leave(socketId);
+});
+
+socket.on('connect', function(data) {
+  console.log('connect');
+  getLocalStream();
+});
+
+function logError(error) {
+  console.log("logError", error);
+}
+
+function press() {
+  var roomID = document.getElementById('roomID').value;
+  if (roomID == "") {
+    alert('Please enter room ID');
+  } else {
+    var roomIDContainer = document.getElementById('roomIDContainer');
+    roomIDContainer.parentElement.removeChild(roomIDContainer);
+    join(roomID);
+  }
+}
+function textRoomPress() {
+  var text = document.getElementById('textRoomInput').value;
+  if (text == "") {
+    alert('Enter something');
+  } else {
+    document.getElementById('textRoomInput').value = '';
+    var content = document.getElementById('textRoomContent');
+    content.innerHTML = content.innerHTML + '<p>' + 'Me' + ': ' + text + '</p>';
+    for (var key in pcPeers) {
+      var pc = pcPeers[key];
+      pc.textDataChannel.send(text);
+    }
+  }
+}
+
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-68314333-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </html>
