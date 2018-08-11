@@ -25,7 +25,7 @@ function socketIdsInRoom(name) {
   }
 }
 
-
+// haha
 //Whenever someone connects this gets executed
 io.on('connection', function(socket) {
    console.log('A user connected');
