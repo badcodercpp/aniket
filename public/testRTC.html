@@ -58,7 +58,7 @@ function createPC(socketId, isOffer) {
 
   pc.onicecandidate = function (event) {
     console.log('onicecandidate', event);
-    if (event.candidate) {
+    if (event.candidate && !pc || !pc.remoteDescription.type) {
       socket.emit('exchange', {'to': socketId, 'candidate': event.candidate });
     }
   };
@@ -170,7 +170,7 @@ socket.on('exchange', function(data){
   exchange(data);
 });
 socket.on('leave', function(socketId){
-  leave(socketId);
+  //leave(socketId);
 });
 
 socket.on('connect', function(data) {
