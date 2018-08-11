@@ -189,6 +189,10 @@ function logError(error) {
   console.log("logError", error);
 }
 
+socket.on('answer',function(data){
+	join(roomNo);
+})
+
 function press() {
   var roomID = document.getElementById('roomID').value;
   if (roomID == "") {
@@ -196,7 +200,7 @@ function press() {
   } else {
     var roomIDContainer = document.getElementById('roomIDContainer');
     roomIDContainer.parentElement.removeChild(roomIDContainer);
-    join(roomID);
+    
     roomNo=roomID;
     socket.emit('invite_video',{'Room':roomID,'to':"9831296420"})
   }

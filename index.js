@@ -105,8 +105,11 @@ let tom=socketSess[data.to];
 var to=io.to(tom);
     to.emit('invite_video', data.Room);
   });
-
-
+  socket.on('answer',function(data){
+	let tom=socketSess[data];
+  })
+	var to=io.to(tom);
+    to.emit('answer', tom);
 });
 
 
