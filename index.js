@@ -3,12 +3,7 @@ var express=require('express')
 var path=require('path')
 var app = express();
 var http = require('http').createServer(app);
-var socketIO=require('socket.io')
-const io = socketIO(http, {
- pingTimeout: 30000,
- pingInterval: 30000
-});
-
+const io = require('socket.io')(server, {pingTimeout: 30000})
 const PORT = process.env.PORT || 5000
 
 //var room={}
