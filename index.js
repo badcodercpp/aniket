@@ -1,3 +1,4 @@
+//var open = require('open');
 var express=require('express')
 var path=require('path')
 var app = express();
@@ -6,12 +7,12 @@ var io = require('socket.io')(http);
 
 const PORT = process.env.PORT || 5000
 
-var room={}
+//var room={}
 app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
    res.sendfile('testRTC.html');
 });
-
+var roomList = {};
 function socketIdsInRoom(name) {
   var socketIds = io.nsps['/'].adapter.rooms[name];
   if (socketIds) {
@@ -67,7 +68,7 @@ io.on('connection', function(socket) {
   socket.on('join', function(name, callback){
     console.log('join', name);
     var socketIds = socketIdsInRoom(name);
-    //callback(socketIds);
+    callback(socketIds);
     socket.join(name);
     socket.room = name;
   });
