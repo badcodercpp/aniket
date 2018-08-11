@@ -107,9 +107,10 @@ var to=io.to(tom);
   });
   socket.on('answer',function(data){
 	let tom=socketSess[data];
-  })
-	var to=io.to(tom);
+var to=io.to(tom);
     to.emit('answer', tom);
+  })
+	
 });
 
 
