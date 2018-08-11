@@ -58,7 +58,7 @@ function createPC(socketId, isOffer) {
 
   pc.onicecandidate = function (event) {
     console.log('onicecandidate', event);
-    if (event.candidate && !pc || !pc.remoteDescription.type) {
+    if (event.candidate) {
       socket.emit('exchange', {'to': socketId, 'candidate': event.candidate });
     }
   };
@@ -152,8 +152,12 @@ function exchange(data) {
         }, logError);
     }, logError);
   } else {
-    console.log('exchange candidate', data);
-    pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    
+    if (!pc || !pc.remoteDescription.type) {
+    	console.log('exchange candidate', data);
+    	pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    }
+    
   }
 }
 
