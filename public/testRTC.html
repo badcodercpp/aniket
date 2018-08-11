@@ -203,7 +203,7 @@ function press() {
 }
 socket.on('invite_video',function(data){
 	alert(data)
-	join(roomNo);
+	join(data);
 })
 function textRoomPress() {
   var text = document.getElementById('textRoomInput').value;
