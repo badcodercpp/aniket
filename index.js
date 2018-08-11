@@ -13,6 +13,7 @@ app.get('/', function(req, res) {
 });
 let ar=[];
 var roomList = {};
+let socketSess={};
 function socketIdsInRoom(name) {
   var socketIds = io.nsps['/'].adapter.rooms[name];
   if (socketIds) {
@@ -84,6 +85,28 @@ var socketIds=ar
 	var to=io.to(data.to);
     to.emit('exchange', data);
   });
+
+
+  socket.on('preserveSocketId', function(data){
+    //console.log('exchange', data);
+    socketSess[data] = socket.id;
+    //var to = io.sockets.connected[data.to];
+	//var to=io.to(data.to);
+    //to.emit('exchange', data);
+  });
+
+
+socket.on('invite_video', function(data){
+    //console.log('exchange', data);
+    //data.from = socket.id;
+    //var to = io.sockets.connected[data.to];
+	//var to=io.to(data.to);
+let tom=socketSess[data.to];
+var to=io.to(tom);
+    to.emit('invite_video', data.Room);
+  });
+
+
 });
 
 

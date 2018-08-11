@@ -34,6 +34,7 @@ var pcPeers = {};
 var selfView = document.getElementById("selfView");
 var remoteViewContainer = document.getElementById("remoteViewContainer");
 var localStream;
+var roomNo;
 
 function getLocalStream() {
   navigator.getUserMedia({ "audio": true, "video": true }, function (stream) {
@@ -180,6 +181,8 @@ socket.on('leave', function(socketId){
 socket.on('connect', function(data) {
   console.log('connect');
   getLocalStream();
+  let userId="9836648105"
+  socket.emit('preserveSocketId',userId)
 });
 
 function logError(error) {
@@ -193,9 +196,14 @@ function press() {
   } else {
     var roomIDContainer = document.getElementById('roomIDContainer');
     roomIDContainer.parentElement.removeChild(roomIDContainer);
-    join(roomID);
+    //join(roomID);
+    roomNo=roomID;
+    socket.emit('invite_video',{Room:roomID,to:"9831296420"})
   }
 }
+socket.on('invite_video',function(data){
+	join(roomNo);
+})
 function textRoomPress() {
   var text = document.getElementById('textRoomInput').value;
   if (text == "") {
