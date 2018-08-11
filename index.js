@@ -11,6 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
    res.sendfile('testRTC.html');
 });
+let ar=[];
 var roomList = {};
 function socketIdsInRoom(name) {
   var socketIds = io.nsps['/'].adapter.rooms[name];
@@ -66,10 +67,10 @@ io.on('connection', function(socket) {
   });
   socket.on('join', function(name, callback){
     console.log('join', name);
-    var socketIds = socketIdsInRoom(name);
-	//let ar=[];
-	//ar.push(socket.id)
-//var socketIds=ar
+    //var socketIds = socketIdsInRoom(name);
+
+	ar.push(socket.id)
+var socketIds=ar
     callback(socketIds);
     socket.join(name);
     socket.room = name;
