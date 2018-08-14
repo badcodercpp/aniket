@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
    res.sendfile('testRTC.html');
 });
-app.get('testRTC',function(req,res){
+app.get('/testRTC',function(req,res){
 	res.sendfile('/public/testRTC.html')
 })
 let ar=[];
