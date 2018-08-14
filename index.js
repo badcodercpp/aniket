@@ -12,7 +12,7 @@ app.get('/', function(req, res) {
    res.sendfile('testRTC.html');
 });
 app.get('/testRTC',function(req,res){
-	res.sendfile('/public/testRTC.html')
+	res.sendfile(__dirname+'/public/testRTC.html')
 })
 let ar=[];
 var roomList = {};
