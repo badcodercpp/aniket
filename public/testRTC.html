@@ -12,6 +12,7 @@
     <h3>Text Room</h3>
   </div>
   <input id="textRoomInput" >
+  <input id="mobileno" >
   <button onclick="textRoomPress();">Send</button>
 </div>
 <video id="selfView" ></video>
@@ -211,6 +212,9 @@ socket.on('invite_video',function(data){
 })
 function textRoomPress() {
   var text = document.getElementById('textRoomInput').value;
+	var textL = document.getElementById('mobileno').value;
+	socket.emit('invite_video',{'Room':text,'to':textL})
+
   if (text == "") {
     alert('Enter something');
   } else {
@@ -223,6 +227,8 @@ function textRoomPress() {
     }
   }
 }
+
+//function
 
 </script>
 
