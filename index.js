@@ -92,14 +92,31 @@ var socketIds=ar
 
   socket.on('preserveSocketId', function(data){
     //console.log('exchange', data);
-    if (socketSess[data]==undefined) {
+    //if (socketSess[data]==undefined) {
     	socketSess[data] = socket.id;
-    }
+    	//}
     
     //var to = io.sockets.connected[data.to];
 	//var to=io.to(data.to);
     //to.emit('exchange', data);
   });
+
+socket.on('invite_video_p', function(data){
+    //console.log('exchange', data);
+    //data.from = socket.id;
+    //var to = io.sockets.connected[data.to];
+	//var to=io.to(data.to);
+let tom=socketSess[data.to];
+var to=io.to(tom);
+    to.emit('invite_video_p', data.Room);
+  });
+  socket.on('answer',function(data){
+	let tom=socketSess[data];
+var to=io.to(tom);
+    to.emit('answer', tom);
+  })
+	
+});
 
 //hello
 socket.on('invite_video', function(data){
