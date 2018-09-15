@@ -204,7 +204,7 @@ function press() {
     roomIDContainer.parentElement.removeChild(roomIDContainer);
     
     roomNo=roomID;
-    socket.emit('invite_video',{'Room':roomID,'to':"9836648105"})
+    //socket.emit('invite_video',{'Room':roomID,'to':"9836648105"})
     socket.emit('invite_video_p',{'Room':roomID,'to':"9836648105"})
   }
 }
@@ -212,6 +212,7 @@ socket.on('invite_video',function(data){
 	alert(data)
 	//join(data);
 })
+
 function textRoomPress() {
   var text = document.getElementById('textRoomInput').value;
 	var textL = document.getElementById('mobileno').value;
