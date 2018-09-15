@@ -74,10 +74,17 @@ io.on('connection', function(socket) {
     //var socketIds = socketIdsInRoom(name);
 
 
-    var clients = io.sockets.clients(name)
-	ar.push(socket.id)
+    //var clients = io.sockets.clients(name)
+	
 var socketIds=ar
-    callback(clients);
+let caaa=[];
+for (var i = socketIds.length - 1; i >= 0; i--) {
+	if (socketIds[i].name==name) {
+		caaa.push(socketIds[i].socket)
+	}
+}
+ar.push({name:name,socket:socket.id})
+    callback(caaa);
     socket.join(name);
     socket.room = name;
   });
