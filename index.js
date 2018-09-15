@@ -75,8 +75,6 @@ io.on('connection', function(socket) {
 
 
     var clients = io.sockets.clients(name)
-    
-    socket.rooms[]
 	ar.push(socket.id)
 var socketIds=ar
     callback(clients);
