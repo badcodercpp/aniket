@@ -73,9 +73,13 @@ io.on('connection', function(socket) {
     console.log('join', name);
     //var socketIds = socketIdsInRoom(name);
 
+
+    var clients = io.sockets.clients(name)
+    
+    socket.rooms[]
 	ar.push(socket.id)
 var socketIds=ar
-    callback(socketIds);
+    callback(clients);
     socket.join(name);
     socket.room = name;
   });
