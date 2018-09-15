@@ -92,7 +92,10 @@ var socketIds=ar
 
   socket.on('preserveSocketId', function(data){
     //console.log('exchange', data);
-    socketSess[data] = socket.id;
+    if (socketSess[data]==undefined) {
+    	socketSess[data] = socket.id;
+    }
+    
     //var to = io.sockets.connected[data.to];
 	//var to=io.to(data.to);
     //to.emit('exchange', data);
