@@ -71,6 +71,9 @@ io.on('connection', function(socket) {
   });
   socket.on('join', function(name, callback){
     console.log('join', name);
+    socket.join(name);
+    socket.room = name;
+    ar.push({name:name,socket:socket.id})
     //var socketIds = socketIdsInRoom(name);
 
 
@@ -83,10 +86,9 @@ for (var i = socketIds.length - 1; i >= 0; i--) {
 		caaa.push(socketIds[i].socket)
 	}
 }
-ar.push({name:name,socket:socket.id})
+
     callback(caaa);
-    socket.join(name);
-    socket.room = name;
+    
   });
 
 
