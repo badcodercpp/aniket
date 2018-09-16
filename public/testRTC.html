@@ -50,7 +50,7 @@ function join(roomID) {
     console.log('join', socketIds);
     for (var i in socketIds) {
       var socketId = socketIds[i];
-      createPC(socketId, true);
+      createPC(socketId, false);
     }
   });
 }
