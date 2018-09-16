@@ -193,7 +193,7 @@ function logError(error) {
 
 socket.on('answer',function(data){
 	alert(roomNo)
-	join(roomNo);
+	
 })
 
 function press() {
@@ -207,10 +207,12 @@ function press() {
     roomNo=roomID;
     //socket.emit('invite_video',{'Room':roomID,'to':"9836648105"})
     socket.emit('invite_video_p',{'Room':roomID,'to':"9836648105"})
+    join(roomNo);
   }
 }
 socket.on('invite_video',function(data){
-	alert(data)
+	alert(data);
+
 	//join(data);
 })
 
