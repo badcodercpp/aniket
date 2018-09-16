@@ -139,7 +139,7 @@ function exchange(data) {
   if (fromId in pcPeers) {
     pc = pcPeers[fromId];
   } else {
-    pc = createPC(fromId, false);
+    pc = createPC(fromId, true);
   }
 
   if (data.sdp) {
