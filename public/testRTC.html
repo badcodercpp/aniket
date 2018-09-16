@@ -50,7 +50,7 @@ function join(roomID) {
     console.log('join', socketIds);
     for (var i in socketIds) {
       var socketId = socketIds[i];
-      createPC(socketId, true);
+      createPC(socketId, false);
     }
   });
 }
@@ -139,7 +139,7 @@ function exchange(data) {
   if (fromId in pcPeers) {
     pc = pcPeers[fromId];
   } else {
-    pc = createPC(fromId, false);
+    pc = createPC(fromId, true);
   }
 
   if (data.sdp) {
