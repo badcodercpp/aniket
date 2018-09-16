@@ -134,7 +134,13 @@ function createPC(socketId, isOffer) {
 }
 
 function exchange(data) {
-
+  var fromId = data.from;
+  var pc;
+  if (fromId in pcPeers) {
+    pc = pcPeers[fromId];
+  } else {
+    pc = createPC(fromId, true);
+  }
 
   if (data.sdp) {
     console.log('exchange sdp', data);
