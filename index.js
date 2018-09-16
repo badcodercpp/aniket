@@ -89,7 +89,14 @@ for (var i = socketIds.length - 1; i >= 0; i--) {
 
 io.in(name).clients((err , clients) => {
     // clients will be array of socket ids , currently available in given room
-    callback(clients);
+    let cl=[];
+    for(let b of clients){
+    	
+    	if(b!=socket.id){
+    		cl.push(b)
+    	}
+    }
+    callback(cl);
 });
 
     
