@@ -79,15 +79,20 @@ io.on('connection', function(socket) {
 
     //var clients = io.sockets.clients(name)
 	
-var socketIds=ar
+/*var socketIds=ar
 let caaa=[];
 for (var i = socketIds.length - 1; i >= 0; i--) {
 	if (socketIds[i].name==name) {
 		caaa.push(socketIds[i].socket)
 	}
-}
+}*/
 
+io.in(room_name).clients((err , clients) => {
+    // clients will be array of socket ids , currently available in given room
     callback(caaa);
+});
+
+    
     
   });
 
